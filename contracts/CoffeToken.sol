@@ -17,7 +17,6 @@ contract CoffeToken is ERC721, Ownable, ReentrancyGuard {
         address _usdcAddress,
         uint256 _mintPrice
     ) ERC721("CoffeToken", "COFFE") Ownable(msg.sender) {
-        // Modificación aquí
         usdcToken = IERC20(_usdcAddress);
         mintPrice = _mintPrice;
         _tokenIds = 0;

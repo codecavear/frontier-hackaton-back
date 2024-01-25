@@ -2,6 +2,7 @@ const HDWalletProvider = require("@truffle/hdwallet-provider");
 require("dotenv").config();
 
 const mnemonic = process.env.MNEMONIC;
+console.log("mnemonic", mnemonic);
 
 /**
  * Use this file to configure your truffle project. It's seeded with some
@@ -55,8 +56,6 @@ module.exports = {
           "https://api.avax-test.network/ext/bc/C/rpc"
         ),
       network_id: 43113,
-      gas: 3000000,
-      gasPrice: 225000000000,
     },
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
