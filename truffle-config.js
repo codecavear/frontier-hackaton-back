@@ -3,9 +3,7 @@ require("dotenv").config();
 
 const MNEMONIC_PHRASE = process.env.MNEMONIC;
 const URL_PROVIDER = process.env.URL_PROVIDER;
-
-console.log("MNEMONIC_PHRASE", MNEMONIC_PHRASE);
-console.log("URL_PROVIDER", URL_PROVIDER);
+const SNOWTRACE_API_KEY = process.env.SNOWTRACE_API_KEY;
 
 /**
  * Use this file to configure your truffle project. It's seeded with some
@@ -51,16 +49,21 @@ console.log("URL_PROVIDER", URL_PROVIDER);
  */
 
 module.exports = {
+  plugins: ["truffle-plugin-verify"],
+  api_keys: {
+    snowtrace: SNOWTRACE_API_KEY,
+  },
   networks: {
     fuji: {
-      provider: () =>
-        new HDWalletProvider(
-          MNEMONIC_PHRASE,
-          `https://api.avax-test.network/ext/bc/C/rpc`
-        ),
+      provider: () => new HDWalletProvider(MNEMONIC_PHRASE, URL_PROVIDER),
       network_id: 43113,
       timeoutBlocks: 200,
       confirmations: 5,
+    },
+    development: {
+      host: "localhost",
+      port: 7545,
+      network_id: 5777,
     },
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
