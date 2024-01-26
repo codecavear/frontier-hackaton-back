@@ -1,8 +1,11 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 require("dotenv").config();
 
-const mnemonic = process.env.MNEMONIC;
-console.log("mnemonic", mnemonic);
+const MNEMONIC_PHRASE = process.env.MNEMONIC;
+const URL_PROVIDER = process.env.URL_PROVIDER;
+
+console.log("MNEMONIC_PHRASE", MNEMONIC_PHRASE);
+console.log("URL_PROVIDER", URL_PROVIDER);
 
 /**
  * Use this file to configure your truffle project. It's seeded with some
@@ -52,10 +55,12 @@ module.exports = {
     fuji: {
       provider: () =>
         new HDWalletProvider(
-          mnemonic,
-          "https://api.avax-test.network/ext/bc/C/rpc"
+          MNEMONIC_PHRASE,
+          `https://api.avax-test.network/ext/bc/C/rpc`
         ),
       network_id: 43113,
+      timeoutBlocks: 200,
+      confirmations: 5,
     },
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
@@ -101,7 +106,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.8.24", // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.19", // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {

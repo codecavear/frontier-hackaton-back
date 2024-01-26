@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+/* import "@openzeppelin/contracts/utils/ReentrancyGuard.sol"; */
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract CoffeToken is ERC721, Ownable, ReentrancyGuard {
+contract CoffeToken is ERC721, Ownable {
     uint256 private _tokenIds;
 
     IERC20 public usdcToken;
@@ -16,7 +16,7 @@ contract CoffeToken is ERC721, Ownable, ReentrancyGuard {
     constructor(
         address _usdcAddress,
         uint256 _mintPrice
-    ) ERC721("CoffeToken", "COFFE") Ownable(msg.sender) {
+    ) ERC721("CoffeToken", "COFFE") Ownable() {
         usdcToken = IERC20(_usdcAddress);
         mintPrice = _mintPrice;
         _tokenIds = 0;
@@ -24,7 +24,7 @@ contract CoffeToken is ERC721, Ownable, ReentrancyGuard {
 
     function mintToken(
         address to
-    ) public onlyOwner nonReentrant returns (uint256) {
+    ) public onlyOwner returns (uint256) {
         require(
             usdcToken.transferFrom(to, address(this), mintPrice),
             "USD payment failed"
@@ -38,7 +38,7 @@ contract CoffeToken is ERC721, Ownable, ReentrancyGuard {
         return newItemId;
     }
 
-    function redeemToken(uint256 tokenId) public nonReentrant {
+    function redeemToken(uint256 tokenId) public {
         require(ownerOf(tokenId) == msg.sender, "Youre not the owner");
         require(
             usdcToken.transfer(msg.sender, tokenPrices[tokenId]),
@@ -51,7 +51,7 @@ contract CoffeToken is ERC721, Ownable, ReentrancyGuard {
     function swapCoffeNFT(
         uint256 tokenId,
         address newOwner
-    ) public nonReentrant {
+    ) public {
         require(
             ownerOf(tokenId) == msg.sender,
             "Only the owner can swap the NFT"

@@ -7,17 +7,18 @@
     "migrate": "truffle migrate --network fuji"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.1",
+    "@openzeppelin/contracts": "^4.9.3",
     "@truffle/hdwallet-provider": "^2.1.15",
     "dotenv": "^16.4.1"
   },
   "devDependencies": {
-    "truffle": "^5.4.22"
+    "truffle": "^5.4.22",
+    "truffle-plugin-verify": "^0.6.7"
   },
   "author": "Code Cave",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "URL del repositorio de tu proyecto"
+    "url": "git+https://github.com/code-cave/frontier-hackaton-back.git"
   }
 }
