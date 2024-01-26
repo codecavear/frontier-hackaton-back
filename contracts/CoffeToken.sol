@@ -2,7 +2,6 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-/* import "@openzeppelin/contracts/utils/ReentrancyGuard.sol"; */
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -22,36 +21,32 @@ contract CoffeToken is ERC721, Ownable {
         _tokenIds = 0;
     }
 
-    function mintToken(
-        address to
-    ) public onlyOwner returns (uint256) {
+    function mintToken() public returns (uint256) {
         require(
-            usdcToken.transferFrom(to, address(this), mintPrice),
+            usdcToken.transferFrom(msg.sender, address(this), mintPrice),
             "USD payment failed"
         );
 
         _tokenIds += 1;
         uint256 newItemId = _tokenIds;
-        _mint(to, newItemId);
+        _mint(msg.sender, newItemId);
         tokenPrices[newItemId] = mintPrice;
 
         return newItemId;
     }
 
     function redeemToken(uint256 tokenId) public {
-        require(ownerOf(tokenId) == msg.sender, "Youre not the owner");
+        require(ownerOf(tokenId) == msg.sender, "You are not the owner");
         require(
             usdcToken.transfer(msg.sender, tokenPrices[tokenId]),
             "USD transfer failed"
         );
 
         _burn(tokenId);
+        tokenPrices[tokenId] = 0;
     }
 
-    function swapCoffeNFT(
-        uint256 tokenId,
-        address newOwner
-    ) public {
+    function swapCoffeNFT(uint256 tokenId, address newOwner) public {
         require(
             ownerOf(tokenId) == msg.sender,
             "Only the owner can swap the NFT"
@@ -59,6 +54,10 @@ contract CoffeToken is ERC721, Ownable {
         safeTransferFrom(msg.sender, newOwner, tokenId);
 
         emit NFTSwapped(msg.sender, newOwner, tokenId);
+    }
+
+    function setMintPrice(uint256 newPrice) public onlyOwner {
+        mintPrice = newPrice;
     }
 
     event NFTSwapped(
