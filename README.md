@@ -40,12 +40,12 @@ Follow these steps to deploy the `CoffeeToken` smart contract to the Avalanche F
 
 ### Minting Tokens
 - **Function**: `mintToken(address to)`
-- **Description**: This function allows the contract owner to mint a new `CoffeeToken`. The owner needs to specify the recipient's address (`to`) and the required amount of USDC for the minting process.
+- **Description**: This function allows any user to mint a new CoffeeToken. The minting process requires the user to pay the set price in USDC. The contract transfers the USDC from the user to the CoffeeToken contract as payment.
 - **Usage**: `mintToken(<recipient_address>)`
 
 ### Redeeming Tokens
 - **Function**: `redeemToken(uint256 tokenId)`
-- **Description**: Token holders can redeem their `CoffeeToken` tokens using this function. It transfers the corresponding USDC amount back to the token holder and then burns the NFT.
+- **Description**: Token holders can redeem their CoffeeToken tokens using this function. It transfers the corresponding USDC amount back to the token holder and then burns the NFT.
 - **Usage**: `redeemToken(<tokenId>)`
 
 ### Swapping Tokens
