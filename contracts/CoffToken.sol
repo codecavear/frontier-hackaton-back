@@ -5,17 +5,17 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract CoffeToken is ERC721, Ownable {
+contract CoffToken is ERC721, Ownable {
     uint256 private _tokenIds;
 
     IERC20 public usdcToken;
     uint256 public mintPrice;
-    mapping(uint256 => uint256) public tokenPrices;
+    mapping(uint256 => uint256) public tokenMintPrices;
 
     constructor(
         address _usdcAddress,
         uint256 _mintPrice
-    ) ERC721("CoffeToken", "COFFE") Ownable() {
+    ) ERC721("CoffToken", "COFF") Ownable() {
         usdcToken = IERC20(_usdcAddress);
         mintPrice = _mintPrice;
         _tokenIds = 0;
@@ -30,23 +30,26 @@ contract CoffeToken is ERC721, Ownable {
         _tokenIds += 1;
         uint256 newItemId = _tokenIds;
         _mint(msg.sender, newItemId);
-        tokenPrices[newItemId] = mintPrice;
+        tokenMintPrices[newItemId] = mintPrice;
 
         return newItemId;
     }
 
     function redeemToken(uint256 tokenId) public {
         require(ownerOf(tokenId) == msg.sender, "You are not the owner");
+        uint256 redeemAmount = tokenMintPrices[tokenId];
+        require(redeemAmount > 0, "Token was not minted with a price");
+
         require(
-            usdcToken.transfer(msg.sender, tokenPrices[tokenId]),
+            usdcToken.transfer(msg.sender, redeemAmount),
             "USD transfer failed"
         );
 
         _burn(tokenId);
-        tokenPrices[tokenId] = 0;
+        tokenMintPrices[tokenId] = 0;
     }
 
-    function swapCoffeNFT(uint256 tokenId, address newOwner) public {
+    function swapToken(uint256 tokenId, address newOwner) public {
         require(
             ownerOf(tokenId) == msg.sender,
             "Only the owner can swap the NFT"
