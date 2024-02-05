@@ -35,6 +35,9 @@ Follow these steps to deploy the `CoffeeToken` smart contract to the Avalanche F
 
 3. **Verbose Deployment (Optional)**:
    - For a more detailed deployment process, including additional RPC (Remote Procedure Call) information, use the command `truffle migrate --network fuji --verbose-rpc`. This can be particularly useful for debugging or when you need more insight into the deployment process.
+4. **Verify erc721 contract (Optional)**:
+   - Command to verify the contract: `truffle run verify CoffToken --network fuji`
+
 
 ## Contract Usage
 
