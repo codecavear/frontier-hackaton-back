@@ -75,8 +75,9 @@ contract CoffToken is ERC721, Ownable {
             );
 
             safeTransferFrom(msg.sender, newOwner, tokenIds[i]);
-            emit NFTSwapped(msg.sender, newOwner, tokenIds[i]);
 
+            /* group emit */
+            emit NFTsSwapped(msg.sender, newOwner, tokenIds);
         }
     }
 
@@ -89,9 +90,6 @@ contract CoffToken is ERC721, Ownable {
         maxOperationLimit = newLimit;
     }
 
-    event NFTSwapped(
-        address indexed oldOwner,
-        address indexed newOwner,
-        uint256 indexed tokenId
-    );
+    event NFTsSwapped(address indexed oldOwner, address indexed newOwner, uint16[] tokenIds);
+
 }
