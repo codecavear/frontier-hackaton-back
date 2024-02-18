@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract CoffToken is ERC721, Ownable {
+contract CoffToken is ERC721Enumerable, Ownable {
   uint256 private _tokenIds;
 
   IERC20 public erc20Token;
@@ -42,26 +42,23 @@ contract CoffToken is ERC721, Ownable {
       tokenMintPrices[_tokenIds] = mintPrice;
     }
 
+    emit TokensMinted(msg.sender, quantity, firstMintedId);
+
     return (firstMintedId, quantity);
   }
 
-  function redeemToken(uint16[] calldata tokenIds) public {
-    require(
-      tokenIds.length > 0 && tokenIds.length <= maxOperationLimit,
-      "Invalid quantity or exceeds the maximum limit of quantiy"
-    );
+  function redeemToken(uint16 quantity) public {
+    require(quantity > 0, "Invalid quantity");
+    require(quantity <= balanceOf(msg.sender), "Not enough tokens owned");
 
     uint256 totalRedeemAmount = 0;
-
-    for (uint16 i = 0; i < tokenIds.length; i++) {
-      uint16 tokenId = tokenIds[i];
-      require(ownerOf(tokenId) == msg.sender, "You are not the owner");
-
+    for (uint16 i = 0; i < quantity; i++) {
+      /* burn update the index */
+      uint256 tokenId = tokenOfOwnerByIndex(msg.sender, 0);
       uint256 redeemAmount = tokenMintPrices[tokenId];
       require(redeemAmount > 0, "Error with token mint price");
 
       totalRedeemAmount += redeemAmount;
-
       _burn(tokenId);
       tokenMintPrices[tokenId] = 0;
     }
@@ -70,25 +67,20 @@ contract CoffToken is ERC721, Ownable {
       erc20Token.transfer(msg.sender, totalRedeemAmount),
       "ERC20 transfer failed"
     );
+
+    emit TokensRedeemed(msg.sender, quantity, totalRedeemAmount);
   }
 
-  function swapToken(uint16[] calldata tokenIds, address newOwner) public {
-    require(
-      tokenIds.length > 0 && tokenIds.length <= maxOperationLimit,
-      "Invalid quantity or exceeds the maximum limit of quantiy"
-    );
+  function transferToken(uint16 quantity, address newOwner) public {
+    require(quantity > 0, "Invalid quantity");
+    require(quantity <= balanceOf(msg.sender), "Not enough tokens owned");
 
-    for (uint16 i = 0; i < tokenIds.length; i++) {
-      require(
-        ownerOf(tokenIds[i]) == msg.sender,
-        "Only the owner can swap the NFT"
-      );
-
-      safeTransferFrom(msg.sender, newOwner, tokenIds[i]);
-
-      /* group emit */
-      emit NFTsSwapped(msg.sender, newOwner, tokenIds);
+    for (uint16 i = 0; i < quantity; i++) {
+      uint256 tokenId = tokenOfOwnerByIndex(msg.sender, 0);
+      safeTransferFrom(msg.sender, newOwner, tokenId);
     }
+
+    emit TokensTransferred(msg.sender, newOwner, quantity);
   }
 
   function setMintPrice(uint16 newPrice) public onlyOwner {
@@ -100,25 +92,19 @@ contract CoffToken is ERC721, Ownable {
     maxOperationLimit = newLimit;
   }
 
-  function setERC20Address(address newERC20Address) public onlyOwner {
-    require(
-      newERC20Address != address(0),
-      "ERC20 address cannot be the zero address"
-    );
-
-    IERC20 erc20Contract = IERC20(newERC20Address);
-    try erc20Contract.balanceOf(address(this)) returns (uint256) {
-      erc20Token = erc20Contract;
-    } catch {
-      revert(
-        "The provided address does not appear to be a valid ERC20 contract"
-      );
-    }
-  }
-
-  event NFTsSwapped(
-    address indexed oldOwner,
-    address indexed newOwner,
-    uint16[] tokenIds
+  event TokensTransferred(
+    address indexed from,
+    address indexed to,
+    uint256 quantity
+  );
+  event TokensMinted(
+    address indexed to,
+    uint256 quantity,
+    uint256 firstMintedId
+  );
+  event TokensRedeemed(
+    address indexed from,
+    uint256 quantity,
+    uint256 totalRedeemAmount
   );
 }
