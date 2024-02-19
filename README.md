@@ -19,9 +19,10 @@ To work with this project, you will need:
 
 Create a `.env` file in the root directory of the project with the following variables:
 
-- `MNEMONIC`: Your wallet mnemonic.
-- `USDC_ADDRESS`: The contract address of the USDC token on the Avalanche network.
+- `MNEMONIC_PHRASE`: Nft contract owner wallet mnemonic.
 - `URL_PROVIDER`: The URL of the Avalanche network provider.
+- `SNOWTRACE_API_KEY`: Your Snowtrace API key.
+
 
 ## Deployment
 
@@ -42,19 +43,19 @@ Follow these steps to deploy the `CoffeeToken` smart contract to the Avalanche F
 ## Contract Usage
 
 ### Minting Tokens
-- **Function**: `mintToken(address to)`
-- **Description**: This function allows any user to mint a new CoffeeToken. The minting process requires the user to pay the set price in USDC. The contract transfers the USDC from the user to the CoffeeToken contract as payment.
-- **Usage**: `mintToken(<recipient_address>)`
+- **Function**: `mintToken(quantity)`
+- **Description**: Allows users to mint new CoffToken tokens in exchange for ERC20 tokens. The minting process requires the user to pay the set price per token in ERC20
+- **Usage**: `mintToken(<quantity>)`
 
 ### Redeeming Tokens
-- **Function**: `redeemToken(uint256 tokenId)`
-- **Description**: Token holders can redeem their CoffeeToken tokens using this function. It transfers the corresponding USDC amount back to the token holder and then burns the NFT.
-- **Usage**: `redeemToken(<tokenId>)`
+- **Function**: `redeemToken(uint16 quantity)`
+- **Description**: Enables token holders to redeem their tokens for the original mint price in ERC20 tokens, then burns the NFTs
+- **Usage**: `redeemToken(<quantity>)`
 
-### Swapping Tokens
-- **Function**: `swapCoffeNFT(uint256 tokenId, address newOwner)`
-- **Description**: This function allows token owners to transfer their `CoffeeToken` to a new owner. The current owner must specify the token ID (`tokenId`) and the address of the new owner (`newOwner`).
-- **Usage**: `swapCoffeNFT(<tokenId>, <new_owner_address>)`
+### Transfer Token
+- **Function**: `transferToken(uint16 quantity, address newOwner)`
+- **Description**: Allows token owners to transfer a specified quantity of CoffToken tokens to a new owner.
+- **Usage**: `transferToken(<quantity>, <new_owner_address>)`
 
 ## Resources
 - [Avalanche Truffle Documentation](https://la-url-aqui)
